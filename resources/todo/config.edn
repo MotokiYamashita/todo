@@ -1,0 +1,70 @@
+{:duct.profile/base
+ {:duct.core/project-ns todo
+
+  :todo.db/take-datasource {:db #ig/ref :duct.database.sql/hikaricp}
+
+  [:duct/const :type/article] [:map
+                               [:articles
+                                [:map
+                                 [:id :int]
+                                 [:title :string]
+                                 [:body :string]
+                                 [:created_at :any]
+                                 [:updated_at :any]]]]
+
+  :duct.handler/root
+  {:router #ig/ref :todo.router/reitit}
+  :todo.router/reitit
+  {:env #ig/ref :duct.core/environment
+   :routes [["/articles"
+             ["/" {:get {:summary "articles#index"
+                         :parameters {}
+                         :responses {200 {:body [:map [:total :int]]}}
+                         :handler #ig/ref :todo.handler.articles/index}
+                   :post {:summary "articles#create"
+                          :parameters {:body [:map
+                                              [:title
+                                               {:title "A title of an article"
+                                                :description "Description for the title parameter"}
+                                               :string]
+                                              [:body
+                                               {:title "A body of an article"}
+                                               :string]]}
+                          :responses {200 {:body #ig/ref :type/article}}
+                          :handler #ig/ref :todo.handler.articles/create}}]
+             ["/:id" {:get {:summary "articles#show"
+                            :responses {200 {:body #ig/ref :type/article}}
+                            :handler #ig/ref :todo.handler.articles/show}
+                      :post {:summary "articles#update"
+                             :parameters {:body [:map
+                                                 [:title
+                                                  {:title "A title of an article"
+                                                   :description "Description for the title parameter"}
+                                                  :string]
+                                                 [:body
+                                                  {:title "A body of an article"}
+                                                  :string]]}
+                             :responses {200 {:body :string}}
+                             :handler #ig/ref :todo.handler.articles/update}}]
+             ["/:id/delete" {:post {:summary "articles#delete"
+                                    :responses {200 {:body :string}}
+                                    :handler #ig/ref :todo.handler.articles/delete}}]]]}
+
+  :todo.handler.articles/index {}
+  :todo.handler.articles/show {:articles-get-by-id #ig/ref :todo.boundary.articles/get-by-id}
+  :todo.handler.articles/create {:articles-create #ig/ref :todo.boundary.articles/create}
+  :todo.handler.articles/update {:articles-update #ig/ref :todo.boundary.articles/update}
+  :todo.handler.articles/delete {:articles-delete #ig/ref :todo.boundary.articles/delete}
+
+  :todo.boundary.articles/create {:db #ig/ref :todo.db/take-datasource}
+  :todo.boundary.articles/update {:db #ig/ref :todo.db/take-datasource}
+  :todo.boundary.articles/delete {:db #ig/ref :todo.db/take-datasource}
+  :todo.boundary.articles/get-by-id {:db #ig/ref :todo.db/take-datasource}}
+
+ :duct.profile/dev #duct/include "dev"
+ :duct.profile/local #duct/include "local"
+ :duct.profile/test #duct/include "test"
+ :duct.profile/prod #duct/include "prod"
+
+ :duct.module/logging {}
+ :duct.module.web/api {}}
