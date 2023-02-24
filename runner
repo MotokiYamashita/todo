@@ -20,7 +20,7 @@ lein repl
 "migrate") ##
 [ -z $(which migrate) ] && brew install golang-migrate
 migrate -source file://./db/migrations -database postgresql://postgres:password@localhost:5433/todo-development?sslmode=disable up
-docker compose run -T db psql postgresql://postgres:password@db:5432/todo-development?sslmode=disable < db/seeds/*.sql
+docker compose exec -T db psql postgresql://postgres:password@db:5432/todo-development?sslmode=disable < db/seeds/*.sql
 migrate -source file://./db/migrations -database postgresql://postgres:password@localhost:5434/todo-test?sslmode=disable up
 ;;
 "migrate-down") ##
@@ -28,7 +28,7 @@ migrate -source file://./db/migrations -database postgresql://postgres:password@
 migrate -source file://./db/migrations -database postgresql://postgres:password@localhost:5434/todo-test?sslmode=disable down
 ;;
 "psql") ##
-docker compose run -T db psql postgresql://postgres:password@db:5432/todo-development?sslmode=disable
+docker compose exec -T db psql postgresql://postgres:password@db:5432/todo-development?sslmode=disable
 ;;
 "test") ##
 lein eftest $ARGS && ./cleanup-testdb

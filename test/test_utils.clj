@@ -7,7 +7,7 @@
 (duct/load-hierarchy)
 
 (defonce system
-  (-> (duct/read-config (io/resource "duct_init/config.edn"))
+  (-> (duct/read-config (io/resource "todo/config.edn"))
       (duct/prep-config [:duct.profile/test :duct.profile/local])
       (ig/init)))
 

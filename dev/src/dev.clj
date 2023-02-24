@@ -12,7 +12,7 @@
 (duct/load-hierarchy)
 
 (defn read-config []
-  (duct/read-config (io/resource "duct_init/config.edn")))
+  (duct/read-config (io/resource "todo/config.edn")))
 
 (def profiles
   [:duct.profile/dev :duct.profile/local])
