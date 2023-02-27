@@ -12,11 +12,36 @@
                                  [:created_at :any]
                                  [:updated_at :any]]]]
 
+  [:duct/const :type/todo] [:map
+                            [:todos
+                             [:map
+                              [:id :int]
+                              [:title :string]
+                              [:body :string]
+                              [:created_at :any]
+                              [:updated_at :any]]]]
+
   :duct.handler/root
   {:router #ig/ref :todo.router/reitit}
   :todo.router/reitit
   {:env #ig/ref :duct.core/environment
-   :routes [["/articles"
+   :routes [["/todos"
+             ["/" {:get {:summary "todos#index"
+                         :parameters {}
+                         :responses {200 {:body [:map [:total :int]]}}
+                         :handler #ig/ref :todo.handler.todos/index}
+                   :post {:summay "todos#create"
+                          :parameters {:body [:map
+                                              [:title
+                                               {:title "A title of an todo"
+                                                :description "Description for the title parameter"}
+                                               :string]
+                                              [:body
+                                               {:title "A body of an todo"}
+                                               :string]]}
+                          :response {200 {:body #ig/ref :type/todo}}
+                          :handler #ig/ref :todo.handler.todos/create}}]]
+            ["/articles"
              ["/" {:get {:summary "articles#index"
                          :parameters {}
                          :responses {200 {:body [:map [:total :int]]}}
@@ -50,12 +75,15 @@
                                     :responses {200 {:body :string}}
                                     :handler #ig/ref :todo.handler.articles/delete}}]]]}
 
+  :todo.handler.todos/index {}
+  :todo.handler.todos/create {:todos-create #ig/ref :todo.boundary.todos/create}
   :todo.handler.articles/index {}
   :todo.handler.articles/show {:articles-get-by-id #ig/ref :todo.boundary.articles/get-by-id}
   :todo.handler.articles/create {:articles-create #ig/ref :todo.boundary.articles/create}
   :todo.handler.articles/update {:articles-update #ig/ref :todo.boundary.articles/update}
   :todo.handler.articles/delete {:articles-delete #ig/ref :todo.boundary.articles/delete}
 
+  :todo.boundary.todos/create {:db #ig/ref :todo.db/take-datasource}
   :todo.boundary.articles/create {:db #ig/ref :todo.db/take-datasource}
   :todo.boundary.articles/update {:db #ig/ref :todo.db/take-datasource}
   :todo.boundary.articles/delete {:db #ig/ref :todo.db/take-datasource}
