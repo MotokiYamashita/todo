@@ -1,10 +1,11 @@
 (ns todo.handler.todos
   (:require [integrant.core :as ig]))
 
-(defmethod ig/init-key ::index [_ conf]
+(defmethod ig/init-key ::index [_ {:keys [todos-index]}]
   (fn [req]
-    {:status 200
-     :body "ok"}))
+    (let [todos (todos-index)]
+      {:status 200
+       :body todos})))
 
 (defmethod ig/init-key ::create [_ {:keys [todos-create]}]
   (fn [{:keys [body-params]}]

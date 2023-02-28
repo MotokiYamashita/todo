@@ -13,3 +13,7 @@
                      {:title title
                       :body body})
         util/structured)))
+(defmethod ig/init-key ::index [_ {:keys [db]}]
+  (fn []
+    (-> db
+        (sql/query ["select * from todos"]))))

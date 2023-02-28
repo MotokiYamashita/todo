@@ -28,7 +28,7 @@
    :routes [["/todos"
              ["/" {:get {:summary "todos#index"
                          :parameters {}
-                         :responses {200 {:body [:map [:total :int]]}}
+                         :responses {200 {:body [:vector :any]}}
                          :handler #ig/ref :todo.handler.todos/index}
                    :post {:summay "todos#create"
                           :parameters {:body [:map
@@ -75,7 +75,7 @@
                                     :responses {200 {:body :string}}
                                     :handler #ig/ref :todo.handler.articles/delete}}]]]}
 
-  :todo.handler.todos/index {}
+  :todo.handler.todos/index {:todos-index #ig/ref :todo.boundary.todos/index}
   :todo.handler.todos/create {:todos-create #ig/ref :todo.boundary.todos/create}
   :todo.handler.articles/index {}
   :todo.handler.articles/show {:articles-get-by-id #ig/ref :todo.boundary.articles/get-by-id}
@@ -83,6 +83,7 @@
   :todo.handler.articles/update {:articles-update #ig/ref :todo.boundary.articles/update}
   :todo.handler.articles/delete {:articles-delete #ig/ref :todo.boundary.articles/delete}
 
+  :todo.boundary.todos/index {:db #ig/ref :todo.db/take-datasource}
   :todo.boundary.todos/create {:db #ig/ref :todo.db/take-datasource}
   :todo.boundary.articles/create {:db #ig/ref :todo.db/take-datasource}
   :todo.boundary.articles/update {:db #ig/ref :todo.db/take-datasource}
